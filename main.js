@@ -123,6 +123,15 @@ function createTray() {
 app.whenReady().then(async () => {
   // Iniciar servidor HTTP
   await startServer();
+
+ipcMain.handle('get-status', async () => {
+  return {
+    status: 'online',
+    version: app.getVersion(),
+    port: 3001,
+    machine: require('os').hostname()
+  }
+})
   
   // Criar janela e tray
   await createWindow();
