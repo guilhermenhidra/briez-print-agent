@@ -37,7 +37,8 @@
     "files": [
       "**/*",
       "!**/*.md",
-      "!.github/**"
+      "!.github/**",
+      "!node_modules/.cache/**"
     ],
     "win": {
       "target": [
