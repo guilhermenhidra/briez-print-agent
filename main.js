@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, nativeImage, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, shell } = require('electron');
 const path = require('path');
 const { startServer, stopServer, getServerStatus } = require('./server');
 
@@ -123,6 +123,15 @@ function createTray() {
 app.whenReady().then(async () => {
   // Iniciar servidor HTTP
   await startServer();
+
+ipcMain.handle('get-status', async () => {
+  return {
+    status: 'online',
+    version: app.getVersion(),
+    port: 3001,
+    machine: require('os').hostname()
+  }
+})
   
   // Criar janela e tray
   await createWindow();
@@ -146,6 +155,7 @@ app.on('second-instance', () => {
 });
 
 app.on('window-all-closed', () => {
+   // app.quit()
   // Não fechar no Windows, continuar na bandeja
 });
 
