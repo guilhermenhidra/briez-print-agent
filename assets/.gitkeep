@@ -1,0 +1,5 @@
+# Pasta para ícones do aplicativo
+# Adicione os seguintes arquivos:
+# - icon.ico (256x256, formato ICO para Windows)
+# - icon.png (512x512, formato PNG)
+# - tray-icon.png (16x16 ou 32x32, para bandeja do sistema)

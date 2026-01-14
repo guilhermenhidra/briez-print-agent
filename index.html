@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Briez Print Agent</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-app-region: drag;
+      user-select: none;
+    }
+
+    .titlebar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 8px;
+      -webkit-app-region: drag;
+    }
+
+    .titlebar-buttons {
+      display: flex;
+      gap: 8px;
+      -webkit-app-region: no-drag;
+    }
+
+    .titlebar-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-minimize { background: #febc2e; }
+    .btn-close { background: #ff5f57; }
+    .btn-minimize:hover { background: #e5a829; }
+    .btn-close:hover { background: #e54942; }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      -webkit-app-region: no-drag;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 40px rgba(255, 255, 255, 0.1);
+    }
+
+    .logo svg {
+      width: 48px;
+      height: 48px;
+      color: #0a0a0a;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .status-card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 16px;
+      padding: 20px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 20px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+    }
+
+    .status-row:not(:last-child) {
+      border-bottom: 1px solid #222;
+    }
+
+    .status-label {
+      color: #888;
+      font-size: 13px;
+    }
+
+    .status-value {
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.online { background: #22c55e; }
+    .status-dot.offline { background: #ef4444; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .printers-section {
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .printers-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .printer-item {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .printer-icon {
+      width: 36px;
+      height: 36px;
+      background: #222;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .printer-icon svg {
+      width: 20px;
+      height: 20px;
+      color: #888;
+    }
+
+    .printer-info {
+      flex: 1;
+    }
+
+    .printer-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .printer-type {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .printer-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .printer-status.online { background: #22c55e; }
+    .printer-status.offline { background: #666; }
+
+    .footer {
+      padding: 16px;
+      text-align: center;
+      color: #444;
+      font-size: 11px;
+    }
+
+    .no-printers {
+      text-align: center;
+      color: #666;
+      padding: 20px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="titlebar">
+    <div class="titlebar-buttons">
+      <button class="titlebar-btn btn-minimize" onclick="window.briez.minimize()"></button>
+      <button class="titlebar-btn btn-close" onclick="window.briez.close()"></button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 9V2h12v7"/>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+        <rect x="6" y="14" width="12" height="8"/>
+      </svg>
+    </div>
+
+    <h1>Briez Print Agent</h1>
+    <p class="subtitle">Impressão automática ativa</p>
+
+    <div class="status-card">
+      <div class="status-row">
+        <span class="status-label">Status</span>
+        <span class="status-value">
+          <span class="status-dot online" id="statusDot"></span>
+          <span id="statusText">Online</span>
+        </span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Porta</span>
+        <span class="status-value" id="portValue">3001</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Versão</span>
+        <span class="status-value" id="versionValue">1.0.0</span>
+      </div>
+    </div>
+
+    <div class="printers-section">
+      <div class="printers-title">Impressoras Detectadas</div>
+      <div id="printersList">
+        <div class="no-printers">Carregando...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Minimiza para a bandeja do sistema ao fechar
+  </div>
+
+  <script>
+    // Carregar status e impressoras
+    async function loadData() {
+      try {
+        const status = await window.briez.getStatus();
+        const printers = await window.briez.getPrinters();
+        
+        // Atualizar UI
+        document.getElementById('statusDot').className = 'status-dot ' + (status.running ? 'online' : 'offline');
+        document.getElementById('statusText').textContent = status.running ? 'Online' : 'Offline';
+        document.getElementById('portValue').textContent = status.port || '3001';
+        document.getElementById('versionValue').textContent = status.version || '1.0.0';
+        
+        // Renderizar impressoras
+        const list = document.getElementById('printersList');
+        if (printers.length === 0) {
+          list.innerHTML = '<div class="no-printers">Nenhuma impressora detectada</div>';
+        } else {
+          list.innerHTML = printers.map(p => `
+            <div class="printer-item">
+              <div class="printer-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M6 9V2h12v7"/>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                  <rect x="6" y="14" width="12" height="8"/>
+                </svg>
+              </div>
+              <div class="printer-info">
+                <div class="printer-name">${p.name}</div>
+                <div class="printer-type">${p.type === 'network' ? 'Rede' : p.type === 'usb' ? 'USB' : 'Serial'}${p.ip ? ' • ' + p.ip : ''}</div>
+              </div>
+              <div class="printer-status ${p.status}"></div>
+            </div>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+    }
+
+    // Carregar ao iniciar e atualizar a cada 10 segundos
+    loadData();
+    setInterval(loadData, 10000);
+  </script>
+</body>
+</html>
