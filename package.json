@@ -64,7 +64,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "nicollaseng",
+        "owner": "guilhermenhidra",
         "repo": "briez-print-agent"
       }
     ]
