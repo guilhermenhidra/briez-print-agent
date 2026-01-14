@@ -146,6 +146,7 @@ app.on('second-instance', () => {
 });
 
 app.on('window-all-closed', () => {
+   // app.quit()
   // Não fechar no Windows, continuar na bandeja
 });
 
