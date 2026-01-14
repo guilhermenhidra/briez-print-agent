@@ -1,6 +1,6 @@
 {
   "name": "briez-print-agent",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "Agente de impressão automática para Briez - Sistema de Gestão para Restaurantes",
   "main": "main.js",
   "author": "Briez",
